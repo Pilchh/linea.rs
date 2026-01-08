@@ -1,21 +1,21 @@
 # Linea.rs
 ### Project Structure
 
-Data
+**Data**
 - Dataset struct: holds features and labels.
 - Preprocessing tools: normalization, train/test split, feature scaling.
 
-Math
+**Math**
 - Matrix operations: multiplication, transpose, dot products.
 - Vector utilities: basic vector math.
 
-Metrics
+**Metrics**
 - Regression metrics: MSE, MAE, R².
 
-Model
+**Model**
 - Linear regression implementation: core LinearRegression struct, fit/predict methods.
 - Regularisation support: optional L1/L2 logic.
 
-Optim
+**Optim**
 - Gradient descent: iterative training logic.
 - Normal equation solver: closed-form solution for small datasets.
