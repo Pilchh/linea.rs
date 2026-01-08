@@ -24,8 +24,8 @@ mod tests {
     #[test]
     fn test_matrix_addition() {
         // Arrange
-        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
-        let b = Matrix::from_vec(2, 2, vec![5.0, 6.0, 7.0, 8.0]);
+        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let b = Matrix::from_vec(2, 2, vec![5.0, 6.0, 7.0, 8.0]).unwrap();
 
         // Act
         let result = a.add(&b);
