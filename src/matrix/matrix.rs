@@ -372,7 +372,26 @@ impl Matrix {
         todo!()
     }
 
-    // TODO: Implement for mapping to matrix values
+    /// Applies a function to every element of the matrix and returns a new matrix.
+    ///
+    /// The dimensions and layout of the matrix is preserved.
+    ///
+    /// # Arguments
+    /// * `f` - A function that takes a single `f64` and returns a transformed `f64`
+    ///
+    /// # Returns
+    /// A new `Matrix` with the same dimensions, where each element has been
+    /// transformed by the function.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    ///
+    /// let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    /// let squared = m.map(|value| value * value);
+    ///
+    /// assert_eq!(squared.data, vec![1.0, 4.0, 9.0, 16.0]);
+    /// ```
     pub fn map<F>(&self, f: F) -> Matrix
     where
         F: Fn(f64) -> f64,
@@ -804,5 +823,17 @@ mod tests {
 
         // Assert
         assert_eq!(result.data, vec![50.0, 110.0, 170.0]);
+    }
+
+    #[test]
+    fn test_matrix_map_iterator() {
+        // Arrange
+        let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+
+        // Act
+        let result = m.map(|value| value * value);
+
+        // Assert
+        assert_eq!(result.data, vec![1.0, 4.0, 9.0, 16.0]);
     }
 }
