@@ -1,3 +1,5 @@
+use std::result;
+
 use crate::math::errors::{MatrixCreationError, MatrixOperationError};
 
 // Row-major implementation of a matrix
@@ -8,6 +10,11 @@ pub struct Matrix {
 }
 
 impl Matrix {
+    #[inline]
+    fn idx(&self, row: usize, col: usize) -> usize {
+        row * self.cols + col
+    }
+
     /// Creates a new Matrix filled with provided value
     ///
     /// # Arguments
@@ -28,18 +35,11 @@ impl Matrix {
             return Err(MatrixCreationError::ZeroDimensions { rows, cols });
         }
 
-        let mut result_matrix = Matrix {
+        Ok(Matrix {
             rows,
             cols,
-            data: Vec::new(),
-        };
-
-        let size = rows * cols;
-        for _ in 0..size {
-            result_matrix.data.push(n);
-        }
-
-        Ok(result_matrix)
+            data: vec![n; rows * cols],
+        })
     }
 
     /// Creates a new Matrix with provided data
@@ -143,16 +143,29 @@ impl Matrix {
     /// );
     /// ```
     pub fn multiply(&self, other: &Matrix) -> Result<Matrix, MatrixOperationError> {
-        let mut result_matrix = Matrix::new_filled(self.rows, other.cols, 0.0).unwrap();
+        if self.cols != other.rows {
+            return Err(MatrixOperationError::InvalidDimensions {
+                a_rows: self.rows,
+                a_cols: self.cols,
+                b_rows: other.rows,
+                b_cols: other.cols,
+            });
+        }
+
+        let mut result_matrix =
+            Matrix::new_filled(self.rows, other.cols, 0.0).expect("dimensions already validated");
 
         // matrix[i][j] = matrix[i * cols + j]
         for i in 0..self.rows {
             for j in 0..other.cols {
-                result_matrix.data[i * result_matrix.cols + j] = 0.0;
+                let mut sum = 0.0;
+
                 for k in 0..self.cols {
-                    result_matrix.data[i * result_matrix.cols + j] +=
-                        self.data[i * self.cols + k] * other.data[k * other.cols + j];
+                    sum += self.data[self.idx(i, k)] * other.data[other.idx(k, j)];
                 }
+
+                let idx = result_matrix.idx(i, j);
+                result_matrix.data[idx] = sum;
             }
         }
 
