@@ -39,23 +39,6 @@ impl Matrix {
         }
     }
 
-    /// Fills a matrix with a value
-    ///
-    /// # Arguments
-    /// * `n` - the value to fill the matrix with
-    ///
-    /// # Example
-    /// ```
-    /// use linears::matrix::Matrix;
-    ///
-    /// let mut matrix = Matrix::new(2, 2);
-    /// matrix.fill(0.0);
-    /// ```
-    pub fn fill(&mut self, n: f64) -> &mut Matrix {
-        self.data.fill(n);
-        self
-    }
-
     /// Creates a new Matrix with provided data
     ///
     /// # Arguments
@@ -86,6 +69,23 @@ impl Matrix {
         }
 
         Ok(Matrix { rows, cols, data })
+    }
+
+    /// Fills a matrix with a value
+    ///
+    /// # Arguments
+    /// * `n` - the value to fill the matrix with
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    ///
+    /// let mut matrix = Matrix::new(2, 2);
+    /// matrix.fill(0.0);
+    /// ```
+    pub fn fill(&mut self, n: f64) -> &mut Matrix {
+        self.data.fill(n);
+        self
     }
 
     /// Gets the value from a matrix at index
