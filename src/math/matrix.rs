@@ -1,4 +1,7 @@
-use crate::math::errors::{MatrixCreationError, MatrixOperationError};
+use crate::math::{
+    errors::{MatrixCreationError, MatrixOperationError},
+    vector::Vector,
+};
 use std::ops::{Index, IndexMut};
 
 // Row-major implementation of a matrix
@@ -349,34 +352,50 @@ impl Matrix {
     }
 
     // TODO: Figure out how this is supposed to work
-    // pub fn inverse(&self) -> Result<Matrix, MatrixOperationError> {
-    //     if !self.is_square() {
-    //         return Err(MatrixOperationError::NotSquare);
-    //     }
-    //
-    //     if self.determinant().expect("already validated to be square") == 0.0 {
-    //         return Err(MatrixOperationError::Singular);
-    //     }
-    //
-    //     todo!()
-    // }
+    pub fn inverse(&self) -> Result<Matrix, MatrixOperationError> {
+        if !self.is_square() {
+            return Err(MatrixOperationError::NotSquare);
+        }
 
-    // pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
-    //     let mut l = Matrix::new_filled(rows, cols, n)
-    // }
+        if self.determinant().expect("already validated to be square") == 0.0 {
+            return Err(MatrixOperationError::Singular);
+        }
 
-    // TODO: Implement these methods
-    // // Functional transform
-    // pub fn map<F>(&self, f: F) -> Matrix
-    // where
-    //     F: Fn(f64) -> f64;
-    //
-    // // Decompositions
-    // pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError>;
-    // pub fn qr_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError>;
-    //
-    // // Matrix–vector multiplication
-    // pub fn mul_vector(&self, vec: &Vector) -> Result<Vector, MatrixOperationError>;
+        todo!()
+    }
+
+    // TODO: Figure out how this is supposed to work
+    pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
+        let mut l = Matrix::new(self.rows, self.cols);
+        l.fill(0.0);
+
+        let mut u = Matrix::new(self.rows, self.cols);
+        u.fill(0.0);
+
+        for i in 0..self.rows {
+            l[(i, i)] = 1.0;
+        }
+
+        todo!()
+    }
+
+    // TODO: Figure out how this is supposed to work
+    pub fn qr_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
+        todo!()
+    }
+
+    // TODO: Implement for mapping to matrix values
+    pub fn map<F>(&self, f: F) -> Matrix
+    where
+        F: Fn(f64) -> f64,
+    {
+        todo!()
+    }
+
+    // TODO: Multiply matrix by vector
+    pub fn mul_vector(&self, vec: &Vector) -> Result<Vector, MatrixOperationError> {
+        todo!()
+    }
 
     /// Adds two matrices together
     ///
