@@ -41,4 +41,12 @@ pub enum MatrixOperationError {
     NotSquare,
     #[error("matrix is singular")]
     Singular,
+    #[error(
+        "dimensions between matrix and vector are invalid ({matrix_rows} {matrix_cols} and {vector_size})"
+    )]
+    MatrixVectorInvalidDimensions {
+        matrix_rows: usize,
+        matrix_cols: usize,
+        vector_size: usize,
+    },
 }

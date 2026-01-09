@@ -55,7 +55,7 @@ impl Matrix {
     /// matrix.fill(0.0);
     /// ```
     pub fn fill(&mut self, n: f64) -> &mut Matrix {
-        self.data = vec![n; self.rows * self.cols];
+        self.data.fill(n);
         self
     }
 
@@ -316,6 +316,10 @@ impl Matrix {
 
     /// Calculates the determinant of a matrix
     ///
+    /// *Note: This uses recursive Laplace expansion which is
+    /// extremely slow for large matrices. This will need
+    /// optimising.*
+    ///
     /// # Returns
     /// The calculated determinant
     ///
@@ -380,9 +384,48 @@ impl Matrix {
         }
     }
 
-    // TODO: Multiply matrix by vector
-    pub fn mul_vector(&self, vec: &Vector) -> Result<Vector, MatrixOperationError> {
-        todo!()
+    /// Multiplies a matrix and a vector
+    ///
+    /// # Arguments
+    /// * `vector` - the vector to multiply by
+    ///
+    /// # Returns
+    /// A new `Vector` with the computed value.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    /// use linears::vector::Vector;
+    /// let mut matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+    /// let vector = Vector::from_vec(vec![2.0, 4.0]);
+    ///
+    /// let column = matrix.mul_vector(&vector);
+    /// ```
+    pub fn mul_vector(&self, vector: &Vector) -> Result<Vector, MatrixOperationError> {
+        if self.cols != vector.size {
+            return Err(MatrixOperationError::MatrixVectorInvalidDimensions {
+                matrix_rows: self.rows,
+                matrix_cols: self.cols,
+                vector_size: vector.size,
+            });
+        }
+
+        let mut result_vector = Vector {
+            size: vector.size,
+            data: vec![0.0; self.rows],
+        };
+
+        for i in 0..self.rows {
+            let mut sum = 0.0;
+
+            for j in 0..self.cols {
+                sum += self[(i, j)] * vector[j];
+            }
+
+            result_vector[i] = sum;
+        }
+
+        Ok(result_vector)
     }
 
     /// Adds two matrices together
@@ -492,11 +535,11 @@ impl Matrix {
     /// use linears::matrix::Matrix;
     /// let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
     ///
-    /// let result = a.transpose().unwrap();
+    /// let result = a.transpose();
     ///
     /// assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
     /// ```
-    pub fn transpose(&self) -> Result<Matrix, MatrixOperationError> {
+    pub fn transpose(&self) -> Matrix {
         let mut result_matrix = Matrix::new(self.cols, self.rows);
         result_matrix.fill(0.0);
 
@@ -506,7 +549,7 @@ impl Matrix {
             }
         }
 
-        Ok(result_matrix)
+        result_matrix
     }
 }
 
@@ -668,7 +711,7 @@ mod tests {
         let m = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
 
         // Act
-        let result = m.transpose().unwrap();
+        let result = m.transpose();
 
         // Assert
         assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
@@ -748,5 +791,18 @@ mod tests {
 
         // Assert
         assert_eq!(determinant, -20.0);
+    }
+
+    #[test]
+    fn test_matrix_vec_multiplication() {
+        // Arrange
+        let m = Matrix::from_vec(3, 2, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+        let v = Vector::from_vec(vec![10.0, 20.0]);
+
+        // Act
+        let result = m.mul_vector(&v).unwrap();
+
+        // Assert
+        assert_eq!(result.data, vec![50.0, 110.0, 170.0]);
     }
 }
