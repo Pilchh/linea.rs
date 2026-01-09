@@ -1,4 +1,4 @@
-use crate::math::errors::MatrixCreationError;
+use crate::math::errors::{MatrixCreationError, MatrixOperationError};
 
 // Row-major implementation of a matrix
 pub struct Matrix {
@@ -8,11 +8,12 @@ pub struct Matrix {
 }
 
 impl Matrix {
-    pub fn add(&self, other: &Matrix) -> Matrix {
+    pub fn add(&self, other: &Matrix) -> Result<Matrix, MatrixOperationError> {
         todo!();
     }
 
     pub fn from_vec(rows: usize, cols: usize, data: Vec<f64>) -> Result<Self, MatrixCreationError> {
+        // return MatrixCreationError::ZeroDimensions { rows, cols };
         todo!();
     }
 }
@@ -28,7 +29,7 @@ mod tests {
         let b = Matrix::from_vec(2, 2, vec![5.0, 6.0, 7.0, 8.0]).unwrap();
 
         // Act
-        let result = a.add(&b);
+        let result = a.add(&b).unwrap();
 
         assert_eq!(result.data, vec![6.0, 8.0, 10.0, 12.0]);
     }

@@ -12,3 +12,16 @@ pub enum MatrixCreationError {
         data_len: usize,
     },
 }
+
+#[derive(Debug, Error)]
+pub enum MatrixOperationError {
+    #[error(
+        "the matrices have invalid dimensions for this operation ({a_rows}, {a_cols} and {b_rows}, {b_cols})"
+    )]
+    InvalidDimensions {
+        a_rows: usize,
+        a_cols: usize,
+        b_rows: usize,
+        b_cols: usize,
+    },
+}
