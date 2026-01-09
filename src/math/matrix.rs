@@ -138,6 +138,9 @@ impl Matrix {
     /// # Arguments
     /// * `index` - index of the row
     ///
+    /// # Returns
+    /// A vector containing all the values in the row
+    ///
     /// # Example
     /// ```
     /// use linears::math::matrix::Matrix;
@@ -161,6 +164,9 @@ impl Matrix {
     ///
     /// # Arguments
     /// * `index` - index of the column
+    ///
+    /// # Returns
+    /// A vector containing all the values in the column
     ///
     /// # Example
     /// ```
@@ -204,15 +210,70 @@ impl Matrix {
         self.rows == self.cols
     }
 
+    /// Multiplies all values in a matrix by a scalar value
+    ///
+    /// # Arguments
+    /// * `scalar` - the value to multiply by
+    ///
+    /// # Returns
+    /// A new `Matrix` with the computed value.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let column = matrix.scalar_multiply(10.0);
+    /// ```
+    pub fn scalar_multiply(&self, scalar: f64) -> Matrix {
+        let mut new_data = self.data.clone();
+        for i in 0..new_data.len() {
+            new_data[i] *= scalar;
+        }
+
+        Matrix {
+            rows: self.rows,
+            cols: self.cols,
+            data: new_data,
+        }
+    }
+
+    /// Adds a scalar value to all values in the matrix
+    ///
+    /// # Arguments
+    /// * `scalar` - the value to add
+    ///
+    /// # Returns
+    /// A new `Matrix` with the computed value.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let column = matrix.scalar_add(10.0);
+    /// ```
+    pub fn scalar_add(&self, scalar: f64) -> Matrix {
+        let mut new_data = self.data.clone();
+        for i in 0..new_data.len() {
+            new_data[i] += scalar;
+        }
+
+        Matrix {
+            rows: self.rows,
+            cols: self.cols,
+            data: new_data,
+        }
+    }
+
     // TODO: Implement these methods
     //
     // // Functional transform
     // pub fn map<F>(&self, f: F) -> Matrix
     // where
     //     F: Fn(f64) -> f64;
-    //
-    // // Shape utilities
-    // pub fn is_square(&self) -> bool;
     //
     // // Scalar operations
     // pub fn scalar_mul(&self, scalar: f64) -> Matrix;
@@ -531,13 +592,40 @@ mod tests {
 
     #[test]
     fn test_matrix_is_square() {
+        // Arrange
         let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
         let b = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
 
+        // Act
         let is_a_square = a.is_square();
         let is_b_square = b.is_square();
 
+        // Assert
         assert_eq!(is_a_square, true);
         assert_eq!(is_b_square, false);
+    }
+
+    #[test]
+    fn test_matrix_scalar_multiply() {
+        // Arrange
+        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+
+        // Act
+        let scalar_matrix = a.scalar_multiply(10.0);
+
+        // Assert
+        assert_eq!(scalar_matrix.data, vec![10.0, 20.0, 30.0, 40.0]);
+    }
+
+    #[test]
+    fn test_matrix_scalar_add() {
+        // Arrange
+        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+
+        // Act
+        let scalar_matrix = a.scalar_add(10.0);
+
+        // Assert
+        assert_eq!(scalar_matrix.data, vec![11.0, 12.0, 13.0, 14.0]);
     }
 }
