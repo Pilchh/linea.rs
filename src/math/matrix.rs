@@ -1,5 +1,3 @@
-use std::result;
-
 use crate::math::errors::{MatrixCreationError, MatrixOperationError};
 
 // Row-major implementation of a matrix
@@ -171,6 +169,34 @@ impl Matrix {
 
         Ok(result_matrix)
     }
+
+    /// Transpose the matrix
+    ///
+    /// # Returns
+    /// A new `Matrix` with transposed value.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+    ///
+    /// let result = a.transpose().unwrap();
+    ///
+    /// assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
+    /// ```
+    pub fn transpose(&self) -> Result<Matrix, MatrixOperationError> {
+        let mut result_matrix =
+            Matrix::new_filled(self.cols, self.rows, 0.0).expect("dimensions already validated");
+
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                let idx = result_matrix.idx(j, i);
+                result_matrix.data[idx] = self.data[self.idx(i, j)];
+            }
+        }
+
+        Ok(result_matrix)
+    }
 }
 
 #[cfg(test)]
@@ -237,5 +263,17 @@ mod tests {
                 29.0, 32.0, 35.0, 38.0, 65.0, 72.0, 79.0, 86.0, 101.0, 112.0, 123.0, 134.0
             ]
         );
+    }
+
+    #[test]
+    fn test_matrix_transposition() {
+        // Arrange
+        let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+
+        // Act
+        let result = a.transpose().unwrap();
+
+        // Assert
+        assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
     }
 }
