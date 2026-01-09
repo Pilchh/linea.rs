@@ -15,6 +15,21 @@ impl Matrix {
         row * self.cols + col
     }
 
+    /// Creates a new Matrix with defined size
+    ///
+    /// # Arguments
+    /// * `rows` - the number of rows
+    /// * `cols` - the number of columns
+    ///
+    /// # Returns
+    /// A new `Matrix` with defined properties.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    ///
+    /// let matrix = Matrix::new(2, 2);
+    /// ```
     pub fn new(rows: usize, cols: usize) -> Matrix {
         Matrix {
             rows,
@@ -23,15 +38,10 @@ impl Matrix {
         }
     }
 
-    /// Creates a new Matrix filled with provided value
+    /// Fills a matrix with a value
     ///
     /// # Arguments
-    /// * `rows` - the number of rows
-    /// * `cols` - the number of columns
     /// * `n` - the value to fill the matrix with
-    ///
-    /// # Returns
-    /// A new `Matrix` with defined properties filled with the value n.
     ///
     /// # Example
     /// ```
