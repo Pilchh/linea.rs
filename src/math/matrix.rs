@@ -187,6 +187,23 @@ impl Matrix {
         Ok(output_vec)
     }
 
+    /// Checks if a matrix is square
+    ///
+    /// # Returns
+    /// If the matrix is square
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let is_square = matrix.is_square();
+    /// ```
+    pub fn is_square(&self) -> bool {
+        self.rows == self.cols
+    }
+
     // TODO: Implement these methods
     //
     // // Functional transform
@@ -510,5 +527,17 @@ mod tests {
 
         // Assert
         assert_eq!(row, vec![1.0, 4.0]);
+    }
+
+    #[test]
+    fn test_matrix_is_square() {
+        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let b = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+
+        let is_a_square = a.is_square();
+        let is_b_square = b.is_square();
+
+        assert_eq!(is_a_square, true);
+        assert_eq!(is_b_square, false);
     }
 }
