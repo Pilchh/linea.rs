@@ -1,6 +1,7 @@
 use crate::math::errors::{MatrixCreationError, MatrixOperationError};
 
 // Row-major implementation of a matrix
+#[derive(Clone)]
 pub struct Matrix {
     pub rows: usize,
     pub cols: usize,
@@ -71,6 +72,38 @@ impl Matrix {
 
         Ok(Matrix { rows, cols, data })
     }
+
+    // TODO: Implement these methods
+    // // Accessors
+    // pub fn get(&self, row: usize, col: usize) -> Result<f64, MatrixOperationError>;
+    // pub fn set(&mut self, row: usize, col: usize, value: f64) -> Result<(), MatrixOperationError>;
+    //
+    // // Row/column extraction
+    // pub fn row(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError>;
+    // pub fn col(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError>;
+    //
+    // // Functional transform
+    // pub fn map<F>(&self, f: F) -> Matrix
+    // where
+    //     F: Fn(f64) -> f64;
+    //
+    // // Shape utilities
+    // pub fn is_square(&self) -> bool;
+    //
+    // // Scalar operations
+    // pub fn scalar_mul(&self, scalar: f64) -> Matrix;
+    // pub fn scalar_add(&self, scalar: f64) -> Matrix;
+    //
+    // // Determinant & inverse
+    // pub fn determinant(&self) -> Result<f64, MatrixOperationError>;
+    // pub fn inverse(&self) -> Result<Matrix, MatrixOperationError>;
+    //
+    // // Decompositions
+    // pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError>;
+    // pub fn qr_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError>;
+    //
+    // // Matrix–vector multiplication
+    // pub fn mul_vector(&self, vec: &Vector) -> Result<Vector, MatrixOperationError>;
 
     /// Adds two matrices together
     ///
@@ -201,7 +234,7 @@ impl Matrix {
 
 impl PartialEq for Matrix {
     fn eq(&self, other: &Self) -> bool {
-        if self.rows == other.rows || self.cols == other.cols {
+        if self.rows != other.rows || self.cols != other.cols {
             return false;
         }
 
