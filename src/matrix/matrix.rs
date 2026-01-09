@@ -19,14 +19,14 @@ impl Matrix {
         row * self.cols + col
     }
 
-    /// Creates a new Matrix with defined size
+    /// Creates a new Matrix with defined size filled with all 0.0
     ///
     /// # Arguments
     /// * `rows` - the number of rows
     /// * `cols` - the number of columns
     ///
     /// # Returns
-    /// A new `Matrix` with defined properties.
+    /// A new `Matrix` with defined properties filled with zeros.
     ///
     /// # Example
     /// ```
@@ -38,7 +38,7 @@ impl Matrix {
         Matrix {
             rows,
             cols,
-            data: Vec::with_capacity(rows * cols),
+            data: vec![0.0; rows * cols],
         }
     }
 
@@ -174,7 +174,8 @@ impl Matrix {
             });
         }
 
-        Ok(self.data[index * self.rows..index * self.rows + self.cols].to_vec())
+        let start = index * self.cols;
+        Ok(self.data[start..start + self.cols].to_vec())
     }
 
     /// Gets an entire column from a matrix
@@ -244,16 +245,7 @@ impl Matrix {
     /// let column = matrix.scalar_multiply(10.0);
     /// ```
     pub fn scalar_multiply(&self, scalar: f64) -> Matrix {
-        let mut new_data = self.data.clone();
-        for i in 0..new_data.len() {
-            new_data[i] *= scalar;
-        }
-
-        Matrix {
-            rows: self.rows,
-            cols: self.cols,
-            data: new_data,
-        }
+        self.map(|value| value * scalar)
     }
 
     /// Adds a scalar value to all values in the matrix
@@ -264,7 +256,7 @@ impl Matrix {
     /// # Returns
     /// A new `Matrix` with the computed value.
     ///
-    /// # Example
+    /// # Example.collect();
     /// ```
     /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
@@ -273,16 +265,7 @@ impl Matrix {
     /// let column = matrix.scalar_add(10.0);
     /// ```
     pub fn scalar_add(&self, scalar: f64) -> Matrix {
-        let mut new_data = self.data.clone();
-        for i in 0..new_data.len() {
-            new_data[i] += scalar;
-        }
-
-        Matrix {
-            rows: self.rows,
-            cols: self.cols,
-            data: new_data,
-        }
+        self.map(|value| value + scalar)
     }
 
     fn determinant_minor(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix {
@@ -390,7 +373,11 @@ impl Matrix {
     where
         F: Fn(f64) -> f64,
     {
-        todo!()
+        Matrix {
+            rows: self.rows,
+            cols: self.cols,
+            data: self.data.iter().copied().map(f).collect(),
+        }
     }
 
     // TODO: Multiply matrix by vector
