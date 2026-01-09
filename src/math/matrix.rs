@@ -248,11 +248,10 @@ impl Matrix {
                 let mut sum = 0.0;
 
                 for k in 0..self.cols {
-                    sum += self.data[self.idx(i, k)] * other.data[other.idx(k, j)];
+                    sum += self[(i, k)] * other[(k, j)];
                 }
 
-                let idx = result_matrix.idx(i, j);
-                result_matrix.data[idx] = sum;
+                result_matrix[(i, j)] = sum;
             }
         }
 
@@ -279,8 +278,7 @@ impl Matrix {
 
         for i in 0..self.rows {
             for j in 0..self.cols {
-                let idx = result_matrix.idx(j, i);
-                result_matrix.data[idx] = self.data[self.idx(i, j)];
+                result_matrix[(j, i)] = self[(i, j)];
             }
         }
 
