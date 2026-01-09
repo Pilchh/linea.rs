@@ -1,8 +1,9 @@
-use crate::math::{
-    errors::{MatrixCreationError, MatrixOperationError},
+use std::ops::{Index, IndexMut};
+
+use crate::{
+    matrix::errors::{MatrixCreationError, MatrixOperationError},
     vector::Vector,
 };
-use std::ops::{Index, IndexMut};
 
 // Row-major implementation of a matrix
 #[derive(Debug)]
@@ -29,7 +30,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     ///
     /// let matrix = Matrix::new(2, 2);
     /// ```
@@ -48,7 +49,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     ///
     /// let mut matrix = Matrix::new(2, 2);
     /// matrix.fill(0.0);
@@ -70,7 +71,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
     /// ```
@@ -101,7 +102,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -129,7 +130,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -159,7 +160,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -186,7 +187,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -216,7 +217,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -236,7 +237,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -265,7 +266,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -337,7 +338,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -407,7 +408,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
     /// let b = Matrix::from_vec(2, 2, vec![5.0, 6.0, 7.0, 8.0]).unwrap();
     ///
@@ -452,7 +453,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let a = Matrix::from_vec(3, 2, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
     /// let b = Matrix::from_vec(2, 4, vec![7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0]).unwrap();
     ///
@@ -501,7 +502,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::math::matrix::Matrix;
+    /// use linears::matrix::Matrix;
     /// let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
     ///
     /// let result = a.transpose().unwrap();
@@ -574,6 +575,18 @@ impl std::ops::Mul for &Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_matrix_fill() {
+        // Arrange
+        let mut m = Matrix::new(2, 2);
+
+        // Act
+        m.fill(0.0);
+
+        // Assert
+        assert_eq!(m.data, vec![0.0; 4]);
+    }
 
     #[test]
     fn test_matrix_getter() {
