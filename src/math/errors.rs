@@ -27,10 +27,14 @@ pub enum MatrixOperationError {
     #[error(
         "matrix index is out of range (index {index_row} {index_col} for {actual_row} {actual_col})"
     )]
-    OutOfBounds {
+    OutOfBoundsMat {
         index_row: usize,
         index_col: usize,
         actual_row: usize,
         actual_col: usize,
     },
+    #[error("matrix index is out of range (index {index_row} for {actual_row}")]
+    OutOfBoundsRow { index_row: usize, actual_row: usize },
+    #[error("matrix index is out of range (index {index_col} for {actual_col})")]
+    OutOfBoundsCol { index_col: usize, actual_col: usize },
 }

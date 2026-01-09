@@ -2,7 +2,7 @@ use crate::math::errors::{MatrixCreationError, MatrixOperationError};
 use std::ops::{Index, IndexMut};
 
 // Row-major implementation of a matrix
-#[derive(Clone)]
+#[derive(Debug)]
 pub struct Matrix {
     pub rows: usize,
     pub cols: usize,
@@ -93,7 +93,7 @@ impl Matrix {
     /// ```
     pub fn get(&self, row: usize, col: usize) -> Result<f64, MatrixOperationError> {
         if row >= self.rows || col >= self.cols {
-            return Err(MatrixOperationError::OutOfBounds {
+            return Err(MatrixOperationError::OutOfBoundsMat {
                 index_row: row,
                 index_col: col,
                 actual_row: self.rows,
@@ -121,7 +121,7 @@ impl Matrix {
     /// ```
     pub fn set(&mut self, row: usize, col: usize, value: f64) -> Result<(), MatrixOperationError> {
         if row >= self.rows || col >= self.cols {
-            return Err(MatrixOperationError::OutOfBounds {
+            return Err(MatrixOperationError::OutOfBoundsMat {
                 index_row: row,
                 index_col: col,
                 actual_row: self.rows,
@@ -133,10 +133,61 @@ impl Matrix {
         Ok(())
     }
 
+    /// Gets an entire row from a matrix
+    ///
+    /// # Arguments
+    /// * `index` - index of the row
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let row = matrix.row(0).unwrap();
+    /// ```
+    pub fn row(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError> {
+        if index >= self.rows {
+            return Err(MatrixOperationError::OutOfBoundsRow {
+                index_row: index,
+                actual_row: self.rows,
+            });
+        }
+
+        Ok(self.data[index * self.rows..index * self.rows + self.cols].to_vec())
+    }
+
+    /// Gets an entire column from a matrix
+    ///
+    /// # Arguments
+    /// * `index` - index of the column
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let column = matrix.col(0).unwrap();
+    /// ```
+    pub fn col(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError> {
+        if index >= self.cols {
+            return Err(MatrixOperationError::OutOfBoundsCol {
+                index_col: index,
+                actual_col: self.cols,
+            });
+        }
+
+        let mut output_vec: Vec<f64> = Vec::with_capacity(self.rows);
+
+        for i in 0..self.rows {
+            output_vec.push(self[(i, index)]);
+        }
+
+        Ok(output_vec)
+    }
+
     // TODO: Implement these methods
-    // // Row/column extraction
-    // pub fn row(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError>;
-    // pub fn col(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError>;
     //
     // // Functional transform
     // pub fn map<F>(&self, f: F) -> Matrix
@@ -435,5 +486,29 @@ mod tests {
 
         // Assert
         assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
+    }
+
+    #[test]
+    fn test_matrix_row() {
+        // Arrange
+        let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+
+        // Act
+        let row = a.row(0).unwrap();
+
+        // Assert
+        assert_eq!(row, vec![1.0, 2.0, 3.0]);
+    }
+
+    #[test]
+    fn test_matrix_col() {
+        // Arrange
+        let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+
+        // Act
+        let row = a.col(0).unwrap();
+
+        // Assert
+        assert_eq!(row, vec![1.0, 4.0]);
     }
 }
