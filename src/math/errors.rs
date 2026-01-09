@@ -39,4 +39,6 @@ pub enum MatrixOperationError {
     OutOfBoundsCol { index_col: usize, actual_col: usize },
     #[error("matrix is not square")]
     NotSquare,
+    #[error("matrix is singular")]
+    Singular,
 }

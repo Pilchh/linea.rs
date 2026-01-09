@@ -15,6 +15,14 @@ impl Matrix {
         row * self.cols + col
     }
 
+    pub fn new(rows: usize, cols: usize) -> Matrix {
+        Matrix {
+            rows,
+            cols,
+            data: Vec::with_capacity(rows * cols),
+        }
+    }
+
     /// Creates a new Matrix filled with provided value
     ///
     /// # Arguments
@@ -28,18 +36,13 @@ impl Matrix {
     /// # Example
     /// ```
     /// use linears::math::matrix::Matrix;
-    /// let matrix = Matrix::new_filled(2, 2, 0.0);
+    ///
+    /// let mut matrix = Matrix::new(2, 2);
+    /// matrix.fill(0.0);
     /// ```
-    pub fn new_filled(rows: usize, cols: usize, n: f64) -> Result<Matrix, MatrixCreationError> {
-        if rows == 0 || cols == 0 {
-            return Err(MatrixCreationError::ZeroDimensions { rows, cols });
-        }
-
-        Ok(Matrix {
-            rows,
-            cols,
-            data: vec![n; rows * cols],
-        })
+    pub fn fill(&mut self, n: f64) -> &mut Matrix {
+        self.data = vec![n; self.rows * self.cols];
+        self
     }
 
     /// Creates a new Matrix with provided data
@@ -335,14 +338,28 @@ impl Matrix {
         Ok(self.determinant_recursive())
     }
 
+    // TODO: Figure out how this is supposed to work
+    // pub fn inverse(&self) -> Result<Matrix, MatrixOperationError> {
+    //     if !self.is_square() {
+    //         return Err(MatrixOperationError::NotSquare);
+    //     }
+    //
+    //     if self.determinant().expect("already validated to be square") == 0.0 {
+    //         return Err(MatrixOperationError::Singular);
+    //     }
+    //
+    //     todo!()
+    // }
+
+    // pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
+    //     let mut l = Matrix::new_filled(rows, cols, n)
+    // }
+
     // TODO: Implement these methods
     // // Functional transform
     // pub fn map<F>(&self, f: F) -> Matrix
     // where
     //     F: Fn(f64) -> f64;
-    //
-    // // Determinant & inverse
-    // pub fn inverse(&self) -> Result<Matrix, MatrixOperationError>;
     //
     // // Decompositions
     // pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError>;
@@ -429,8 +446,8 @@ impl Matrix {
             });
         }
 
-        let mut result_matrix =
-            Matrix::new_filled(self.rows, other.cols, 0.0).expect("dimensions already validated");
+        let mut result_matrix = Matrix::new(self.rows, other.cols);
+        result_matrix.fill(0.0);
 
         // matrix[i][j] = matrix[i * cols + j]
         for i in 0..self.rows {
@@ -463,8 +480,8 @@ impl Matrix {
     /// assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
     /// ```
     pub fn transpose(&self) -> Result<Matrix, MatrixOperationError> {
-        let mut result_matrix =
-            Matrix::new_filled(self.cols, self.rows, 0.0).expect("dimensions already validated");
+        let mut result_matrix = Matrix::new(self.cols, self.rows);
+        result_matrix.fill(0.0);
 
         for i in 0..self.rows {
             for j in 0..self.cols {
@@ -532,10 +549,10 @@ mod tests {
     #[test]
     fn test_matrix_getter() {
         // Arrange
-        let matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
 
         // Act
-        let value = matrix.get(1, 1).unwrap();
+        let value = m.get(1, 1).unwrap();
 
         // Assert
         assert_eq!(value, 4.0);
@@ -544,13 +561,13 @@ mod tests {
     #[test]
     fn test_matrix_setter() {
         // Arrange
-        let mut matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let mut m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
 
         // Act
-        matrix.set(1, 1, 10.0).unwrap();
+        m.set(1, 1, 10.0).unwrap();
 
         // Assert
-        assert_eq!(matrix[(1, 1)], 10.0);
+        assert_eq!(m[(1, 1)], 10.0);
     }
 
     #[test]
@@ -561,10 +578,11 @@ mod tests {
         let value = 0.0;
 
         // Act
-        let matrix = Matrix::new_filled(rows, cols, value).unwrap();
+        let mut m = Matrix::new(rows, cols);
+        m.fill(value);
 
         // Assert
-        assert_eq!(matrix.data, vec![0.0, 0.0, 0.0, 0.0]);
+        assert_eq!(m.data, vec![0.0, 0.0, 0.0, 0.0]);
     }
 
     #[test]
@@ -575,12 +593,12 @@ mod tests {
         let data = vec![1.0, 2.0, 3.0, 4.0];
 
         // Act
-        let matrix = Matrix::from_vec(rows, cols, data.clone()).unwrap();
+        let m = Matrix::from_vec(rows, cols, data.clone()).unwrap();
 
         // Assert
-        assert_eq!(matrix.rows, rows);
-        assert_eq!(matrix.cols, cols);
-        assert_eq!(matrix.data, data);
+        assert_eq!(m.rows, rows);
+        assert_eq!(m.cols, cols);
+        assert_eq!(m.data, data);
     }
 
     #[test]
@@ -618,10 +636,10 @@ mod tests {
     #[test]
     fn test_matrix_transposition() {
         // Arrange
-        let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+        let m = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
 
         // Act
-        let result = a.transpose().unwrap();
+        let result = m.transpose().unwrap();
 
         // Assert
         assert_eq!(result.data, vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0]);
@@ -630,10 +648,10 @@ mod tests {
     #[test]
     fn test_matrix_row() {
         // Arrange
-        let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+        let m = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
 
         // Act
-        let row = a.row(0).unwrap();
+        let row = m.row(0).unwrap();
 
         // Assert
         assert_eq!(row, vec![1.0, 2.0, 3.0]);
@@ -642,10 +660,10 @@ mod tests {
     #[test]
     fn test_matrix_col() {
         // Arrange
-        let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
+        let m = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
 
         // Act
-        let row = a.col(0).unwrap();
+        let row = m.col(0).unwrap();
 
         // Assert
         assert_eq!(row, vec![1.0, 4.0]);
@@ -669,10 +687,10 @@ mod tests {
     #[test]
     fn test_matrix_scalar_multiply() {
         // Arrange
-        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
 
         // Act
-        let scalar_matrix = a.scalar_multiply(10.0);
+        let scalar_matrix = m.scalar_multiply(10.0);
 
         // Assert
         assert_eq!(scalar_matrix.data, vec![10.0, 20.0, 30.0, 40.0]);
@@ -681,10 +699,10 @@ mod tests {
     #[test]
     fn test_matrix_scalar_add() {
         // Arrange
-        let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
 
         // Act
-        let scalar_matrix = a.scalar_add(10.0);
+        let scalar_matrix = m.scalar_add(10.0);
 
         // Assert
         assert_eq!(scalar_matrix.data, vec![11.0, 12.0, 13.0, 14.0]);
