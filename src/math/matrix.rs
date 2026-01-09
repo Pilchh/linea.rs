@@ -199,6 +199,38 @@ impl Matrix {
     }
 }
 
+impl PartialEq for Matrix {
+    fn eq(&self, other: &Self) -> bool {
+        if self.rows == other.rows || self.cols == other.cols {
+            return false;
+        }
+
+        // f64 float tolerance
+        const EPS: f64 = 1e-9;
+
+        self.data
+            .iter()
+            .zip(&other.data)
+            .all(|(a, b)| (a - b).abs() < EPS)
+    }
+}
+
+impl std::ops::Add for &Matrix {
+    type Output = Matrix;
+
+    fn add(self, other: Self) -> Matrix {
+        self.add(other).unwrap()
+    }
+}
+
+impl std::ops::Mul for &Matrix {
+    type Output = Matrix;
+
+    fn mul(self, other: Self) -> Matrix {
+        self.multiply(other).unwrap()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -240,7 +272,7 @@ mod tests {
         let b = Matrix::from_vec(2, 2, vec![5.0, 6.0, 7.0, 8.0]).unwrap();
 
         // Act
-        let result = a.add(&b).unwrap();
+        let result = &a + &b;
 
         assert_eq!(result.data, vec![6.0, 8.0, 10.0, 12.0]);
     }
@@ -252,7 +284,7 @@ mod tests {
         let b = Matrix::from_vec(2, 4, vec![7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0]).unwrap();
 
         // Act
-        let result = a.multiply(&b).unwrap();
+        let result = &a * &b;
 
         // Assert
         assert_eq!(result.rows, 3);
