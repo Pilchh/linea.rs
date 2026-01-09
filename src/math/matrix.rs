@@ -1,4 +1,4 @@
-use std::error::Error;
+use crate::math::errors::MatrixCreationError;
 
 // Row-major implementation of a matrix
 pub struct Matrix {
@@ -12,7 +12,7 @@ impl Matrix {
         todo!();
     }
 
-    pub fn from_vec(rows: usize, cols: usize, data: Vec<f64>) -> Result<Self, String> {
+    pub fn from_vec(rows: usize, cols: usize, data: Vec<f64>) -> Result<Self, MatrixCreationError> {
         todo!();
     }
 }
