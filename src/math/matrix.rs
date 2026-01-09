@@ -1,4 +1,5 @@
 use crate::math::errors::{MatrixCreationError, MatrixOperationError};
+use std::ops::{Index, IndexMut};
 
 // Row-major implementation of a matrix
 #[derive(Clone)]
@@ -55,7 +56,7 @@ impl Matrix {
     /// ```
     /// use linears::math::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
-    /// let matrix = Matrix::from_vec(2, 2, data);
+    /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
     /// ```
     pub fn from_vec(rows: usize, cols: usize, data: Vec<f64>) -> Result<Self, MatrixCreationError> {
         if rows == 0 || cols == 0 {
@@ -73,11 +74,66 @@ impl Matrix {
         Ok(Matrix { rows, cols, data })
     }
 
+    /// Gets the value from a matrix at index
+    ///
+    /// # Arguments
+    /// * `row` - index of the row
+    /// * `col` - index of the column
+    ///
+    /// # Returns
+    /// The value stored at that index
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let value = matrix.get(1, 1).unwrap();
+    /// ```
+    pub fn get(&self, row: usize, col: usize) -> Result<f64, MatrixOperationError> {
+        if row >= self.rows || col >= self.cols {
+            return Err(MatrixOperationError::OutOfBounds {
+                index_row: row,
+                index_col: col,
+                actual_row: self.rows,
+                actual_col: self.cols,
+            });
+        }
+
+        Ok(self[(row, col)])
+    }
+
+    /// Sets the value in a matrix at index
+    ///
+    /// # Arguments
+    /// * `row` - index of the row
+    /// * `col` - index of the column
+    /// * `value` - the value to set
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// matrix.set(1, 1, 5.0).unwrap();
+    /// ```
+    pub fn set(&mut self, row: usize, col: usize, value: f64) -> Result<(), MatrixOperationError> {
+        if row >= self.rows || col >= self.cols {
+            return Err(MatrixOperationError::OutOfBounds {
+                index_row: row,
+                index_col: col,
+                actual_row: self.rows,
+                actual_col: self.cols,
+            });
+        }
+
+        self[(row, col)] = value;
+        Ok(())
+    }
+
     // TODO: Implement these methods
-    // // Accessors
-    // pub fn get(&self, row: usize, col: usize) -> Result<f64, MatrixOperationError>;
-    // pub fn set(&mut self, row: usize, col: usize, value: f64) -> Result<(), MatrixOperationError>;
-    //
     // // Row/column extraction
     // pub fn row(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError>;
     // pub fn col(&self, index: usize) -> Result<Vec<f64>, MatrixOperationError>;
@@ -232,6 +288,23 @@ impl Matrix {
     }
 }
 
+impl Index<(usize, usize)> for Matrix {
+    type Output = f64;
+
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        let (row, col) = index;
+        &self.data[self.idx(row, col)]
+    }
+}
+
+impl IndexMut<(usize, usize)> for Matrix {
+    fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
+        let (row, col) = index;
+        let idx = self.idx(row, col);
+        &mut self.data[idx]
+    }
+}
+
 impl PartialEq for Matrix {
     fn eq(&self, other: &Self) -> bool {
         if self.rows != other.rows || self.cols != other.cols {
@@ -267,6 +340,30 @@ impl std::ops::Mul for &Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_matrix_getter() {
+        // Arrange
+        let matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+
+        // Act
+        let value = matrix.get(1, 1).unwrap();
+
+        // Assert
+        assert_eq!(value, 4.0);
+    }
+
+    #[test]
+    fn test_matrix_setter() {
+        // Arrange
+        let mut matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+
+        // Act
+        matrix.set(1, 1, 10.0).unwrap();
+
+        // Assert
+        assert_eq!(matrix[(1, 1)], 10.0);
+    }
 
     #[test]
     fn test_matrix_new_filled() {

@@ -24,4 +24,13 @@ pub enum MatrixOperationError {
         b_rows: usize,
         b_cols: usize,
     },
+    #[error(
+        "matrix index is out of range (index {index_row} {index_col} for {actual_row} {actual_col})"
+    )]
+    OutOfBounds {
+        index_row: usize,
+        index_col: usize,
+        actual_row: usize,
+        actual_col: usize,
+    },
 }
