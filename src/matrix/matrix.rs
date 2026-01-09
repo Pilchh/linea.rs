@@ -352,19 +352,60 @@ impl Matrix {
         todo!()
     }
 
-    // TODO: Figure out how this is supposed to work
+    /// Calculates the LU decomposition of a matrix
+    ///
+    /// # Returns
+    /// Two `Matrix` objects where one is L and one is U.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    ///
+    /// let m = Matrix::from_vec(3, 3, vec![4.0, 3.0, 2.0, 6.0, 3.0, 0.0, 2.0, 1.0, 1.0]).unwrap();
+    ///
+    /// let (l, u) = m.lu_decompose().unwrap();
+    ///
+    /// assert_eq!(&l * &u, m);
+    /// ```
     pub fn lu_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
         let mut l = Matrix::new(self.rows, self.cols);
-        l.fill(0.0);
-
         let mut u = Matrix::new(self.rows, self.cols);
-        u.fill(0.0);
 
+        // Fill diagonal with 1.0
         for i in 0..self.rows {
             l[(i, i)] = 1.0;
         }
 
-        todo!()
+        for i in 0..self.rows {
+            // Compute U row i
+            for j in i..self.rows {
+                let mut sum = 0.0;
+
+                for k in 0..i {
+                    sum += l[(i, k)] * u[(k, j)];
+                }
+
+                u[(i, j)] = self[(i, j)] - sum;
+            }
+
+            // Check for zero pivot
+            if u[(i, i)].abs() < 1e-12 {
+                return Err(MatrixOperationError::Singular);
+            }
+
+            // Compute L column i
+            for j in (i + 1)..self.rows {
+                let mut sum = 0.0;
+
+                for k in 0..i {
+                    sum += l[(j, k)] * u[(k, i)];
+                }
+
+                l[(j, i)] = (self[(j, i)] - sum) / u[(i, i)];
+            }
+        }
+
+        Ok((l, u))
     }
 
     // TODO: Figure out how this is supposed to work
@@ -835,5 +876,17 @@ mod tests {
 
         // Assert
         assert_eq!(result.data, vec![1.0, 4.0, 9.0, 16.0]);
+    }
+
+    #[test]
+    fn test_matrix_lu_decompose() {
+        // Arrange
+        let m = Matrix::from_vec(3, 3, vec![4.0, 3.0, 2.0, 6.0, 3.0, 0.0, 2.0, 1.0, 1.0]).unwrap();
+
+        // Act
+        let (l, u) = m.lu_decompose().unwrap();
+
+        // Assert
+        assert_eq!(&l * &u, m);
     }
 }
