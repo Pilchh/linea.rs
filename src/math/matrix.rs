@@ -268,19 +268,80 @@ impl Matrix {
         }
     }
 
+    fn determinant_minor(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix {
+        let mut data = Vec::with_capacity((self.rows - 1) * (self.cols - 1));
+
+        for row in 0..self.rows {
+            if row == row_to_remove {
+                continue;
+            }
+
+            for column in 0..self.cols {
+                if column == col_to_remove {
+                    continue;
+                }
+
+                data.push(self[(row, column)])
+            }
+        }
+
+        Matrix {
+            rows: self.rows - 1,
+            cols: self.cols - 1,
+            data,
+        }
+    }
+
+    fn determinant_recursive(&self) -> f64 {
+        let n = self.rows;
+
+        if n == 1 {
+            return self[(0, 0)];
+        }
+
+        if n == 2 {
+            return self[(0, 0)] * self[(1, 1)] - self[(0, 1)] * self[(1, 0)];
+        }
+
+        let mut determinant = 0.0;
+
+        for col in 0..n {
+            let sign = if col % 2 == 0 { 1.0 } else { -1.0 };
+            let minor = self.determinant_minor(0, col);
+            determinant += sign * self[(0, col)] * minor.determinant_recursive();
+        }
+
+        determinant
+    }
+
+    /// Calculates the determinant of a matrix
+    ///
+    /// # Returns
+    /// The calculated determinant
+    ///
+    /// # Example
+    /// ```
+    /// use linears::math::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let determinant = matrix.determinant();
+    /// ```
+    pub fn determinant(&self) -> Result<f64, MatrixOperationError> {
+        if !self.is_square() {
+            return Err(MatrixOperationError::NotSquare);
+        }
+
+        Ok(self.determinant_recursive())
+    }
+
     // TODO: Implement these methods
-    //
     // // Functional transform
     // pub fn map<F>(&self, f: F) -> Matrix
     // where
     //     F: Fn(f64) -> f64;
     //
-    // // Scalar operations
-    // pub fn scalar_mul(&self, scalar: f64) -> Matrix;
-    // pub fn scalar_add(&self, scalar: f64) -> Matrix;
-    //
     // // Determinant & inverse
-    // pub fn determinant(&self) -> Result<f64, MatrixOperationError>;
     // pub fn inverse(&self) -> Result<Matrix, MatrixOperationError>;
     //
     // // Decompositions
@@ -627,5 +688,18 @@ mod tests {
 
         // Assert
         assert_eq!(scalar_matrix.data, vec![11.0, 12.0, 13.0, 14.0]);
+    }
+
+    #[test]
+    fn test_matrix_determinant() {
+        // Arrange
+        let m =
+            Matrix::from_vec(3, 3, vec![2.0, 5.0, 3.0, 1.0, -2.0, -1.0, 1.0, 3.0, 4.0]).unwrap();
+
+        // Act
+        let determinant = m.determinant().unwrap();
+
+        // Assert
+        assert_eq!(determinant, -20.0);
     }
 }

@@ -37,4 +37,6 @@ pub enum MatrixOperationError {
     OutOfBoundsRow { index_row: usize, actual_row: usize },
     #[error("matrix index is out of range (index {index_col} for {actual_col})")]
     OutOfBoundsCol { index_col: usize, actual_col: usize },
+    #[error("matrix is not square")]
+    NotSquare,
 }
