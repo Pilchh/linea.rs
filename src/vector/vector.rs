@@ -176,11 +176,11 @@ impl Vector {
     /// use linears::vector::Vector;
     /// let v = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     ///
-    /// let result = v.scalar_mul(10.0);
+    /// let result = v.multiply_scalar(10.0);
     ///  
     /// assert_eq!(result.data, vec![10.0, 20.0, 30.0]);
     /// ```
-    pub fn scalar_mul(&self, scalar: f64) -> Vector {
+    pub fn multiply_scalar(&self, scalar: f64) -> Vector {
         let mut result_vector = Vector {
             size: self.size,
             data: Vec::with_capacity(self.size),
@@ -259,11 +259,19 @@ impl std::ops::Sub for &Vector {
     }
 }
 
+impl std::ops::Mul for &Vector {
+    type Output = f64;
+
+    fn mul(self, other: &Vector) -> f64 {
+        self.dot(other).unwrap()
+    }
+}
+
 impl std::ops::Mul<f64> for &Vector {
     type Output = Vector;
 
     fn mul(self, scalar: f64) -> Vector {
-        self.scalar_mul(scalar)
+        self.multiply_scalar(scalar)
     }
 }
 
@@ -340,7 +348,7 @@ mod tests {
         let b = Vector::from_vec(vec![4.0, 5.0, 6.0]);
 
         // Act
-        let result = a.dot(&b).unwrap();
+        let result = &a * &b;
 
         // Assert
         assert_eq!(result, 32.0);

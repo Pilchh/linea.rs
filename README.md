@@ -4,6 +4,7 @@ A basic rust linear algebra crate for personal use
 
 ### Matrix
 The matrix object provides the following methods:
+- `new`
 - `from_vec`
 - `fill`
 - `get`
@@ -12,16 +13,21 @@ The matrix object provides the following methods:
 - `col`
 - `is_square`
 - `add`
+- `add_scalar`
 - `multiply`
-- `mul_vector`
+- `multiply_scalar`
+- `multiply_vector`
 - `transpose`
-- `scalar_multiply`
-- `scalar_add`
 - `determinant`
 - `inverse`
 - `lu_decompose`
 - `qr_decompose`
-- `mul_vector`
 
 ## Vector
-- TODO
+- `from_vec`
+- `get`
+- `set`
+- `add`
+- `sub`
+- `multiply_scalar`
+- `dot`
