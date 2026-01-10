@@ -1,18 +1,20 @@
 # Linea.rs
 A basic rust linear algebra crate for personal use
-### Project Structure
+## Project Structure
 
-## Matrix
-- `from_vec` - Creates a new matrix from a vector.
-- `fill` - Fill a matrix with a single value
-- `get` - Gets the value from a matrix at an index.
-- `set` - Sets a matrix value at index.
-- `row` - Gets an entire row from the matrix.
-- `col` - Gets an entire column from the matrix.
-- `is_square` - Checks if a matrix is square.
-- `add` - Adds two matrices.
-- `multiply` - Multiplies to matrices.
-- `transpose` - Transposes a matrix
+### Matrix
+The matrix object provides the following methods:
+- `from_vec`
+- `fill`
+- `get`
+- `set`
+- `row`
+- `col`
+- `is_square`
+- `add`
+- `multiply`
+- `mul_vector`
+- `transpose`
 - `scalar_multiply`
 - `scalar_add`
 - `determinant`

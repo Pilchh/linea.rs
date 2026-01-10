@@ -49,6 +49,26 @@ impl Matrix {
         Ok(result_matrix)
     }
 
+    /// Adds a scalar value to all values in the matrix
+    ///
+    /// # Arguments
+    /// * `scalar` - the value to add
+    ///
+    /// # Returns
+    /// A new `Matrix` with the computed value.
+    ///
+    /// # Example.collect();
+    /// ```
+    /// use linears::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let column = matrix.add_scalar(10.0);
+    /// ```
+    pub fn add_scalar(&self, scalar: f64) -> Matrix {
+        self.map(|value| value + scalar)
+    }
+
     /// Multiplies two matrices together
     ///
     /// # Arguments
@@ -101,6 +121,26 @@ impl Matrix {
         Ok(result_matrix)
     }
 
+    /// Multiplies all values in a matrix by a scalar value
+    ///
+    /// # Arguments
+    /// * `scalar` - the value to multiply by
+    ///
+    /// # Returns
+    /// A new `Matrix` with the computed value.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    /// let data = vec![1.0, 2.0, 3.0, 4.0];
+    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
+    ///
+    /// let column = matrix.multiply_scalar(10.0);
+    /// ```
+    pub fn multiply_scalar(&self, scalar: f64) -> Matrix {
+        self.map(|value| value * scalar)
+    }
+
     /// Multiplies a matrix and a vector
     ///
     /// # Arguments
@@ -113,12 +153,13 @@ impl Matrix {
     /// ```
     /// use linears::matrix::Matrix;
     /// use linears::vector::Vector;
+    ///
     /// let mut matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
     /// let vector = Vector::from_vec(vec![2.0, 4.0]);
     ///
-    /// let column = matrix.mul_vector(&vector);
+    /// let column = matrix.multiply_vector(&vector);
     /// ```
-    pub fn mul_vector(&self, vector: &Vector) -> Result<Vector, MatrixOperationError> {
+    pub fn multiply_vector(&self, vector: &Vector) -> Result<Vector, MatrixOperationError> {
         if self.cols != vector.size {
             return Err(MatrixOperationError::MatrixVectorInvalidDimensions {
                 matrix_rows: self.rows,
@@ -143,46 +184,6 @@ impl Matrix {
         }
 
         Ok(result_vector)
-    }
-
-    /// Adds a scalar value to all values in the matrix
-    ///
-    /// # Arguments
-    /// * `scalar` - the value to add
-    ///
-    /// # Returns
-    /// A new `Matrix` with the computed value.
-    ///
-    /// # Example.collect();
-    /// ```
-    /// use linears::matrix::Matrix;
-    /// let data = vec![1.0, 2.0, 3.0, 4.0];
-    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
-    ///
-    /// let column = matrix.scalar_add(10.0);
-    /// ```
-    pub fn scalar_add(&self, scalar: f64) -> Matrix {
-        self.map(|value| value + scalar)
-    }
-
-    /// Multiplies all values in a matrix by a scalar value
-    ///
-    /// # Arguments
-    /// * `scalar` - the value to multiply by
-    ///
-    /// # Returns
-    /// A new `Matrix` with the computed value.
-    ///
-    /// # Example
-    /// ```
-    /// use linears::matrix::Matrix;
-    /// let data = vec![1.0, 2.0, 3.0, 4.0];
-    /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
-    ///
-    /// let column = matrix.scalar_multiply(10.0);
-    /// ```
-    pub fn scalar_multiply(&self, scalar: f64) -> Matrix {
-        self.map(|value| value * scalar)
     }
 
     /// Transpose the matrix
@@ -221,11 +222,35 @@ impl std::ops::Add for &Matrix {
     }
 }
 
+impl std::ops::Add<f64> for &Matrix {
+    type Output = Matrix;
+
+    fn add(self, scalar: f64) -> Matrix {
+        self.add_scalar(scalar)
+    }
+}
+
 impl std::ops::Mul for &Matrix {
     type Output = Matrix;
 
-    fn mul(self, other: Self) -> Matrix {
+    fn mul(self, other: &Matrix) -> Matrix {
         self.multiply(other).unwrap()
+    }
+}
+
+impl std::ops::Mul<f64> for &Matrix {
+    type Output = Matrix;
+
+    fn mul(self, scalar: f64) -> Matrix {
+        self.multiply_scalar(scalar)
+    }
+}
+
+impl std::ops::Mul<&Vector> for &Matrix {
+    type Output = Vector;
+
+    fn mul(self, other: &Vector) -> Vector {
+        self.multiply_vector(other).unwrap()
     }
 }
 
@@ -271,7 +296,7 @@ mod tests {
         let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
 
         // Act
-        let scalar_matrix = m.scalar_add(10.0);
+        let scalar_matrix = &m + 10.0;
 
         // Assert
         assert_eq!(scalar_matrix.data, vec![11.0, 12.0, 13.0, 14.0]);
@@ -283,7 +308,7 @@ mod tests {
         let m = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
 
         // Act
-        let scalar_matrix = m.scalar_multiply(10.0);
+        let scalar_matrix = &m * 10.0;
 
         // Assert
         assert_eq!(scalar_matrix.data, vec![10.0, 20.0, 30.0, 40.0]);
@@ -296,7 +321,7 @@ mod tests {
         let v = Vector::from_vec(vec![10.0, 20.0]);
 
         // Act
-        let result = m.mul_vector(&v).unwrap();
+        let result = &m * &v;
 
         // Assert
         assert_eq!(result.data, vec![50.0, 110.0, 170.0]);
