@@ -1,6 +1,4 @@
-pub mod matrix;
-mod utils;
-pub mod vector;
+pub mod math;
 
 // #[cfg(feature = "ml")]
 pub mod ml;

@@ -1,7 +1,7 @@
 use crate::{
-    matrix::{Matrix, errors::MatrixOperationError},
-    utils::{dot, norm},
-    vector::Vector,
+    math::matrix::{Matrix, errors::MatrixOperationError},
+    math::utils::{dot, norm},
+    math::vector::Vector,
 };
 
 impl Matrix {
@@ -62,7 +62,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -83,7 +83,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     ///
     /// let m = Matrix::from_vec(3, 3, vec![4.0, 3.0, 2.0, 6.0, 3.0, 0.0, 2.0, 1.0, 1.0]).unwrap();
     ///
@@ -182,8 +182,8 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
-    /// use linears::vector::Vector;
+    /// use linears::math::matrix::Matrix;
+    /// use linears::math::vector::Vector;
     ///
     /// let R = Matrix::from_vec(3, 3, vec![2.0, 3.0, 1.0, 0.0, 1.0, 4.0, 0.0, 0.0, 5.0]).unwrap();
     /// let b = Vector::from_vec(vec![9.0, 7.0, 10.0]);
@@ -227,8 +227,8 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
-    /// use linears::vector::Vector;
+    /// use linears::math::matrix::Matrix;
+    /// use linears::math::vector::Vector;
     ///
     /// let L = Matrix::from_vec(3, 3, vec![3.0, 0.0, 0.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0]).unwrap();
     /// let b = Vector::from_vec(vec![6.0, 5.0, 1.0]);

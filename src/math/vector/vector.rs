@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
 
-use crate::vector::errors::VectorOperationError;
+use crate::math::vector::errors::VectorOperationError;
 
 #[derive(Debug)]
 pub struct Vector {
@@ -19,7 +19,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     ///
     /// let data = vec![1.0, 2.0, 3.0];
     /// let vector = Vector::from_vec(data);
@@ -41,7 +41,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     ///
     /// let vector = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     ///
@@ -68,7 +68,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     ///
     /// let mut vector = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     ///
@@ -98,7 +98,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     /// let a = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     /// let b = Vector::from_vec(vec![5.0, 6.0, 7.0]);
     ///
@@ -136,7 +136,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     /// let a = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     /// let b = Vector::from_vec(vec![5.0, 6.0, 7.0]);
     ///
@@ -174,7 +174,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     /// let v = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     ///
     /// let result = v.multiply_scalar(10.0);
@@ -204,7 +204,7 @@ impl Vector {
     ///
     /// # Example
     /// ```
-    /// use linears::vector::Vector;
+    /// use linears::math::vector::Vector;
     /// let a = Vector::from_vec(vec![1.0, 2.0, 3.0]);
     /// let b = Vector::from_vec(vec![4.0, 5.0, 6.0]);
     ///

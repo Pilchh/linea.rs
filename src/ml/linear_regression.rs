@@ -1,4 +1,4 @@
-use crate::{matrix::Matrix, ml::dataset::Dataset, vector::Vector};
+use crate::{math::matrix::Matrix, math::vector::Vector, ml::dataset::Dataset};
 
 pub struct LinearRegression {
     pub coefficients: Option<Vector>,

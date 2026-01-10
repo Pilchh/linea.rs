@@ -1,6 +1,6 @@
 use std::{fmt, fs};
 
-use crate::{matrix::Matrix, ml::feature::Feature, vector::Vector};
+use crate::{math::matrix::Matrix, ml::feature::Feature};
 
 #[derive(Debug)]
 pub struct Dataset {

@@ -1,6 +1,6 @@
 use crate::{
-    matrix::{Matrix, errors::MatrixOperationError},
-    vector::Vector,
+    math::matrix::{Matrix, errors::MatrixOperationError},
+    math::vector::Vector,
 };
 
 impl Matrix {
@@ -14,7 +14,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     /// let a = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
     /// let b = Matrix::from_vec(2, 2, vec![5.0, 6.0, 7.0, 8.0]).unwrap();
     ///
@@ -59,7 +59,7 @@ impl Matrix {
     ///
     /// # Example.collect();
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -79,7 +79,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     /// let a = Matrix::from_vec(3, 2, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
     /// let b = Matrix::from_vec(2, 4, vec![7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0]).unwrap();
     ///
@@ -131,7 +131,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     /// let data = vec![1.0, 2.0, 3.0, 4.0];
     /// let mut matrix = Matrix::from_vec(2, 2, data).unwrap();
     ///
@@ -151,8 +151,8 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
-    /// use linears::vector::Vector;
+    /// use linears::math::matrix::Matrix;
+    /// use linears::math::vector::Vector;
     ///
     /// let mut matrix = Matrix::from_vec(2, 2, vec![1.0, 2.0, 3.0, 4.0]).unwrap();
     /// let vector = Vector::from_vec(vec![2.0, 4.0]);
@@ -193,7 +193,7 @@ impl Matrix {
     ///
     /// # Example
     /// ```
-    /// use linears::matrix::Matrix;
+    /// use linears::math::matrix::Matrix;
     /// let a = Matrix::from_vec(2, 3, vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]).unwrap();
     ///
     /// let result = a.transpose();
