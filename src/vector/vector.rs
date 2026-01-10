@@ -1,5 +1,7 @@
 use std::ops::{Index, IndexMut};
 
+use crate::vector::errors::VectorOperationError;
+
 pub struct Vector {
     pub size: usize,
     pub data: Vec<f64>,
@@ -26,6 +28,35 @@ impl Vector {
             size: data.len(),
             data,
         }
+    }
+
+    /// Gets the value from a vector at index
+    ///
+    /// # Arguments
+    /// * `index` - index of the data
+    ///
+    /// # Returns
+    /// The value stored at that index
+    ///
+    /// # Example
+    /// ```
+    /// use linears::vector::Vector;
+    ///
+    /// let vector = Vector::from_vec(vec![1.0, 2.0, 3.0]);
+    ///
+    /// let value = vector.get(1).unwrap();
+    ///
+    /// assert_eq!(value, 2.0);
+    /// ```
+    pub fn get(&self, index: usize) -> Result<f64, VectorOperationError> {
+        if index >= self.size {
+            return Err(VectorOperationError::OutOfBounds {
+                index: index,
+                size: self.size,
+            });
+        }
+
+        Ok(self.data[index])
     }
 
     //     pub fn get(&self, index: usize) -> Result<f64, VectorOperationError>;
@@ -65,5 +96,17 @@ mod tests {
 
         // Assert
         assert_eq!(v.data, vec![1.0, 2.0, 3.0]);
+    }
+
+    #[test]
+    fn test_vector_get() {
+        // Arrange
+        let v = Vector::from_vec(vec![1.0, 2.0, 3.0]);
+
+        // Act
+        let result = v.get(1).unwrap();
+
+        // Assert
+        assert_eq!(result, 2.0);
     }
 }
