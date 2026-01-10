@@ -247,7 +247,8 @@ impl std::ops::Add for &Vector {
     type Output = Vector;
 
     fn add(self, other: Self) -> Vector {
-        self.add(other).unwrap()
+        self.add(other)
+            .expect("Vector addition requires equal dimensions")
     }
 }
 
@@ -255,7 +256,8 @@ impl std::ops::Sub for &Vector {
     type Output = Vector;
 
     fn sub(self, other: Self) -> Vector {
-        self.sub(other).unwrap()
+        self.sub(other)
+            .expect("Vector subtraction requires equal dimensions")
     }
 }
 
@@ -263,7 +265,8 @@ impl std::ops::Mul for &Vector {
     type Output = f64;
 
     fn mul(self, other: &Vector) -> f64 {
-        self.dot(other).unwrap()
+        self.dot(other)
+            .expect("Vector dot product requires equal dimensions")
     }
 }
 

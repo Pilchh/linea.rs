@@ -218,7 +218,8 @@ impl std::ops::Add for &Matrix {
     type Output = Matrix;
 
     fn add(self, other: Self) -> Matrix {
-        self.add(other).unwrap()
+        self.add(other)
+            .expect("Matrix addition requires equal dimensions")
     }
 }
 
@@ -234,7 +235,8 @@ impl std::ops::Mul for &Matrix {
     type Output = Matrix;
 
     fn mul(self, other: &Matrix) -> Matrix {
-        self.multiply(other).unwrap()
+        self.multiply(other)
+            .expect("Matrix multiplication requires left.cols == right.rows")
     }
 }
 
@@ -250,7 +252,8 @@ impl std::ops::Mul<&Vector> for &Matrix {
     type Output = Vector;
 
     fn mul(self, other: &Vector) -> Vector {
-        self.multiply_vector(other).unwrap()
+        self.multiply_vector(other)
+            .expect("Matrix and vector multiplication requires matrix.cols == vector.size")
     }
 }
 
