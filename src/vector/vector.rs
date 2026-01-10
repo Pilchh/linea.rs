@@ -59,8 +59,33 @@ impl Vector {
         Ok(self.data[index])
     }
 
-    //     pub fn get(&self, index: usize) -> Result<f64, VectorOperationError>;
-    //     pub fn set(&mut self, index: usize, value: f64) -> Result<(), VectorOperationError>;
+    /// Sets the value at an index of a vector
+    ///
+    /// # Arguments
+    /// * `index` - index of the data
+    /// * `value` - the value to set
+    ///
+    /// # Example
+    /// ```
+    /// use linears::vector::Vector;
+    ///
+    /// let vector = Vector::from_vec(vec![1.0, 2.0, 3.0]);
+    ///
+    /// let value = vector.set(1, 20.0).unwrap();
+    ///
+    /// assert_eq!(value, 20.0);
+    /// ```
+    pub fn set(&mut self, index: usize, value: f64) -> Result<(), VectorOperationError> {
+        if index >= self.size {
+            return Err(VectorOperationError::OutOfBounds {
+                index: index,
+                size: self.size,
+            });
+        }
+
+        self.data[index] = value;
+        Ok(())
+    }
     //
     //     pub fn add(&self, other: &Vector) -> Result<Vector, VectorOperationError>;
     //     pub fn sub(&self, other: &Vector) -> Result<Vector, VectorOperationError>;
@@ -108,5 +133,17 @@ mod tests {
 
         // Assert
         assert_eq!(result, 2.0);
+    }
+
+    #[test]
+    fn test_vector_set() {
+        // Arrange
+        let mut v = Vector::from_vec(vec![1.0, 2.0, 3.0]);
+
+        // Act
+        v.set(1, 20.0).unwrap();
+
+        // Assert
+        assert_eq!(v.data[1], 20.0);
     }
 }
