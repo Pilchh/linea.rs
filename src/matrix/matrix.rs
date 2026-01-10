@@ -3,7 +3,7 @@ use std::ops::{Index, IndexMut};
 use crate::matrix::errors::{MatrixCreationError, MatrixOperationError};
 
 // Row-major implementation of a matrix
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Matrix {
     pub rows: usize,
     pub cols: usize,
@@ -154,6 +154,20 @@ impl Matrix {
 
         self[(row, col)] = value;
         Ok(())
+    }
+
+    pub fn drop_col(&self, col_index: usize) -> Matrix {
+        let mut new_data = Vec::with_capacity(self.rows * (self.cols - 1));
+
+        for r in 0..self.rows {
+            for c in 0..self.cols {
+                if c != col_index {
+                    new_data.push(self[(r, c)])
+                }
+            }
+        }
+
+        Matrix::from_vec(self.rows, self.cols - 1, new_data).unwrap()
     }
 
     /// Gets an entire row from a matrix

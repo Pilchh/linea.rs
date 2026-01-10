@@ -2,6 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use crate::vector::errors::VectorOperationError;
 
+#[derive(Debug)]
 pub struct Vector {
     pub size: usize,
     pub data: Vec<f64>,
