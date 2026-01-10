@@ -171,6 +171,96 @@ impl Matrix {
 
         Ok((q, r))
     }
+
+    /// Solves an upper-triangular linear system `R * x = b` using back-substitution.
+    ///
+    /// # Parameters
+    /// * `b`: A vector of length `n`.
+    ///
+    /// # Returns
+    /// - Solution vector `x` such that `R * x = b`.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    /// use linears::vector::Vector;
+    ///
+    /// let R = Matrix::from_vec(3, 3, vec![2.0, 3.0, 1.0, 0.0, 1.0, 4.0, 0.0, 0.0, 5.0]).unwrap();
+    /// let b = Vector::from_vec(vec![9.0, 7.0, 10.0]);
+    ///
+    /// let x = R.solve_upper(&b).unwrap();
+    ///
+    /// assert_eq!(x.data, vec![5.0, -1.0, 2.0]);
+    /// ```
+    pub fn solve_upper(&self, b: &Vector) -> Result<Vector, MatrixOperationError> {
+        if !self.is_square() {
+            return Err(MatrixOperationError::NotSquare);
+        }
+
+        let n = self.rows;
+        let mut x = Vector::from_vec(vec![0.0; n]);
+
+        for i in (0..n).rev() {
+            let mut sum = 0.0;
+
+            for j in i + 1..n {
+                sum += &self[(i, j)] * &x[j];
+            }
+
+            if self[(i, i)] == 0.0 {
+                return Err(MatrixOperationError::Singular);
+            }
+
+            x[i] = (b[i] - sum) / self[(i, i)];
+        }
+
+        Ok(x)
+    }
+
+    /// Solves an lower-triangular linear system `L * x = b` using forward-substitution.
+    ///
+    /// # Parameters
+    /// * `b`: A vector of length `n`.
+    ///
+    /// # Returns
+    /// - Solution vector `x` such that `L * x = b`.
+    ///
+    /// # Example
+    /// ```
+    /// use linears::matrix::Matrix;
+    /// use linears::vector::Vector;
+    ///
+    /// let L = Matrix::from_vec(3, 3, vec![3.0, 0.0, 0.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0]).unwrap();
+    /// let b = Vector::from_vec(vec![6.0, 5.0, 1.0]);
+    ///
+    /// let x = L.solve_lower(&b).unwrap();
+    ///
+    /// assert_eq!(x.data, vec![2.0, 1.0, 0.0]);
+    /// ```
+    pub fn solve_lower(&self, b: &Vector) -> Result<Vector, MatrixOperationError> {
+        if !self.is_square() {
+            return Err(MatrixOperationError::NotSquare);
+        }
+
+        let n = self.rows;
+        let mut x = Vector::from_vec(vec![0.0; n]);
+
+        for i in 0..n {
+            let mut sum = 0.0;
+
+            for j in 0..i {
+                sum += &self[(i, j)] * &x[j];
+            }
+
+            if self[(i, i)] == 0.0 {
+                return Err(MatrixOperationError::Singular);
+            }
+
+            x[i] = (b[i] - sum) / self[(i, i)];
+        }
+
+        Ok(x)
+    }
 }
 
 #[cfg(test)]
@@ -228,5 +318,25 @@ mod tests {
         // 3. Check Q * R = A
         let reconstructed = &q * &r;
         assert_eq!(reconstructed, a);
+    }
+
+    #[test]
+    fn test_solve_upper() {
+        let r = Matrix::from_vec(3, 3, vec![2.0, 3.0, 1.0, 0.0, 1.0, 4.0, 0.0, 0.0, 5.0]).unwrap();
+        let b = Vector::from_vec(vec![9.0, 7.0, 10.0]);
+
+        let x = r.solve_upper(&b).unwrap();
+
+        assert_eq!(x.data, vec![5.0, -1.0, 2.0]);
+    }
+
+    #[test]
+    fn test_solve_lower() {
+        let l = Matrix::from_vec(3, 3, vec![3.0, 0.0, 0.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0]).unwrap();
+        let b = Vector::from_vec(vec![6.0, 5.0, 1.0]);
+
+        let x = l.solve_lower(&b).unwrap();
+
+        assert_eq!(x.data, vec![2.0, 1.0, 0.0]);
     }
 }
