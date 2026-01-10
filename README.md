@@ -23,6 +23,18 @@ The matrix object provides the following methods:
 - `lu_decompose`
 - `qr_decompose`
 
+#### Arithmetic Operators
+To help make arithmetic easier, the following operators are implemented via `std::ops` traits:
+| Expression          | Meaning                                         |
+| ------------------- | ----------------------------------------------- |
+| `&Matrix + &Matrix` | Matrix addition                                 |
+| `&Matrix + f64`     | Add a scalar to each element of the matrix      |
+| `&Matrix * &Matrix` | Matrix multiplication                           |
+| `&Matrix * f64`     | Multiply each element of the matrix by a scalar |
+| `&Matrix * &Vector` | Multiply a matrix by a vector                   |
+
+**NOTE:** All operators panic if dimensions are incompatable. For sale, fallible operations, use the corresponding methods (e.g. `Matrix::add(&other) -> Result<Matrix, MatrixOperationError>`).
+
 ## Vector
 - `from_vec`
 - `get`
@@ -31,3 +43,14 @@ The matrix object provides the following methods:
 - `sub`
 - `multiply_scalar`
 - `dot`
+
+#### Arithmetic Operators
+To help make arithmetic easier, the following operators are implemented via `std::ops` traits:
+| Expression          | Meaning                                         |
+| ------------------- | ----------------------------------------------- |
+| `&Vector + &Vector` | Vector addition                                 |
+| `&Vector - &Vector` | Vector subtraction                              |
+| `&Vector * &Vector` | Vector dot product                              |
+| `&Vector * f64`     | Multiply each element of the vector by a scalar |
+
+**NOTE:** All operators panic if dimensions are incompatable. For sale, fallible operations, use the corresponding methods (e.g. `Matrix::add(&other) -> Result<Matrix, MatrixOperationError>`).
