@@ -3,7 +3,7 @@ A basic rust linear algebra crate for personal use
 ## Project Structure
 
 ### Matrix
-The matrix object provides the following methods:
+The `Matrix` object provides the following methods:
 - `new`
 - `from_vec`
 - `fill`
@@ -33,9 +33,10 @@ To help make arithmetic easier, the following operators are implemented via `std
 | `&Matrix * f64`     | Multiply each element of the matrix by a scalar |
 | `&Matrix * &Vector` | Multiply a matrix by a vector                   |
 
-**NOTE:** All operators panic if dimensions are incompatable. For sale, fallible operations, use the corresponding methods (e.g. `Matrix::add(&other) -> Result<Matrix, MatrixOperationError>`).
+**NOTE:** All operators panic if dimensions are incompatible. For safe, fallible operations, use the corresponding methods (e.g. `Matrix::add(&other) -> Result<Matrix, MatrixOperationError>`).
 
 ## Vector
+The `Vector` object provides the following methods:
 - `from_vec`
 - `get`
 - `set`
@@ -53,4 +54,4 @@ To help make arithmetic easier, the following operators are implemented via `std
 | `&Vector * &Vector` | Vector dot product                              |
 | `&Vector * f64`     | Multiply each element of the vector by a scalar |
 
-**NOTE:** All operators panic if dimensions are incompatable. For sale, fallible operations, use the corresponding methods (e.g. `Matrix::add(&other) -> Result<Matrix, MatrixOperationError>`).
+**NOTE:** All operators panic if dimensions are incompatible. For safe, fallible operations, use the corresponding methods (e.g. `Vector::add(&other) -> Result<Vector, VectorOperationError>`).
