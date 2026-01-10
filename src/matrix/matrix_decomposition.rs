@@ -1,4 +1,8 @@
-use crate::matrix::{Matrix, errors::MatrixOperationError};
+use crate::{
+    matrix::{Matrix, errors::MatrixOperationError},
+    utils::{dot, norm},
+    vector::Vector,
+};
 
 impl Matrix {
     fn determinant_minor(&self, row_to_remove: usize, col_to_remove: usize) -> Matrix {
@@ -72,19 +76,6 @@ impl Matrix {
         Ok(self.determinant_recursive())
     }
 
-    // TODO: Figure out how this is supposed to work
-    pub fn inverse(&self) -> Result<Matrix, MatrixOperationError> {
-        if !self.is_square() {
-            return Err(MatrixOperationError::NotSquare);
-        }
-
-        if self.determinant().expect("already validated to be square") == 0.0 {
-            return Err(MatrixOperationError::Singular);
-        }
-
-        todo!()
-    }
-
     /// Calculates the LU decomposition of a matrix
     ///
     /// # Returns
@@ -143,7 +134,42 @@ impl Matrix {
 
     // TODO: Figure out how this is supposed to work
     pub fn qr_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
-        todo!()
+        let m = self.rows;
+        let n = self.cols;
+
+        let mut q = Matrix::new(m, n);
+        let mut r = Matrix::new(n, n);
+
+        let mut v_cols: Vec<Vec<f64>> = Vec::with_capacity(n);
+        for j in 0..n {
+            v_cols.push(self.col(j)?);
+        }
+
+        for j in 0..n {
+            let mut vj = v_cols[j].clone();
+
+            for i in 0..j {
+                let qi = q.col(i)?;
+                let rij = dot(&qi, &vj);
+                r[(i, j)] = rij;
+
+                for k in 0..m {
+                    vj[k] -= rij * qi[k];
+                }
+            }
+
+            let rjj = norm(&vj);
+            if rjj.abs() < 1e-12 {
+                return Err(MatrixOperationError::Singular);
+            }
+            r[(j, j)] = rjj;
+
+            for k in 0..m {
+                q[(k, j)] = vj[k] / rjj;
+            }
+        }
+
+        Ok((q, r))
     }
 }
 
@@ -174,5 +200,33 @@ mod tests {
 
         // Assert
         assert_eq!(&l * &u, m);
+    }
+
+    #[test]
+    fn test_qr_decompose() {
+        let a = Matrix::from_vec(
+            3,
+            3,
+            vec![12.0, -51.0, 4.0, 6.0, 167.0, -68.0, -4.0, 24.0, -41.0],
+        )
+        .unwrap();
+
+        let (q, r) = a.qr_decompose().unwrap();
+
+        // 1. Check Q^T Q = I
+        let qtq = &q.transpose() * &q;
+        let identity = Matrix::identity(3);
+        assert_eq!(qtq, identity);
+
+        // 2. Check R is upper triangular
+        for i in 0..r.rows {
+            for j in 0..i {
+                assert!(r[(i, j)].abs() < 1e-9);
+            }
+        }
+
+        // 3. Check Q * R = A
+        let reconstructed = &q * &r;
+        assert_eq!(reconstructed, a);
     }
 }

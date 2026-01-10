@@ -71,6 +71,15 @@ impl Matrix {
         Ok(Matrix { rows, cols, data })
     }
 
+    // TODO: Add docstring
+    pub fn identity(n: usize) -> Matrix {
+        let mut m = Matrix::new(n, n);
+        for i in 0..n {
+            m[(i, i)] = 1.0;
+        }
+        m
+    }
+
     /// Fills a matrix with a value
     ///
     /// # Arguments
