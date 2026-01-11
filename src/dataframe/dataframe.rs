@@ -95,6 +95,8 @@ impl DataFrame {
         DataFrame::from_series(series).unwrap()
     }
 
+    // pub fn filter(&self, mask: &Series) -> DataFrame {}
+
     pub fn head(&self, n: usize) -> DataFrame {
         let mut df = DataFrame::new();
 
@@ -174,22 +176,6 @@ impl Index<&str> for DataFrame {
             .expect("series not found")
     }
 }
-
-// impl PartialEq for Matrix {
-//     fn eq(&self, other: &Self) -> bool {
-//         if self.rows != other.rows || self.cols != other.cols {
-//             return false;
-//         }
-//
-//         // f64 float tolerance
-//         const EPS: f64 = 1e-9;
-//
-//         self.data
-//             .iter()
-//             .zip(&other.data)
-//             .all(|(a, b)| (a - b).abs() < EPS)
-//     }
-// }
 
 const PADDING: usize = 15;
 
