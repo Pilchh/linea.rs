@@ -64,9 +64,9 @@ impl fmt::Display for Dataset {
         // Print header (feature names)
         for (i, feature) in self.features.iter().enumerate() {
             if i < self.features.len() - 1 {
-                write!(f, "{}, ", feature.name);
+                write!(f, "{}, ", feature.name)?;
             } else {
-                write!(f, "{}", feature.name);
+                write!(f, "{}", feature.name)?;
             }
         }
 
@@ -78,9 +78,9 @@ impl fmt::Display for Dataset {
 
         for i in 0..total {
             if i % self.features.len() != 0 {
-                write!(f, "{:.2}, ", self.samples.data[i]);
+                write!(f, "{:.2}, ", self.samples.data[i])?;
             } else {
-                write!(f, "\n{:.2}, ", self.samples.data[i]);
+                write!(f, "\n{:.2}, ", self.samples.data[i])?;
             }
         }
 

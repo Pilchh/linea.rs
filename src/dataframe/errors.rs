@@ -5,7 +5,11 @@ pub enum DataFrameError {
     #[error(
         "series length does not match dataframe length (series length {s_len}, dataframe length {df_len})"
     )]
-    SeriesLengthMismatch { s_len: usize, df_len: usize },
+    SeriesDataFrameLengthMismatch { s_len: usize, df_len: usize },
+    #[error("provides series are different lengths")]
+    SeriesLengthMismatch,
+    #[error("the data provided to form dataframe is invalid")]
+    InvalidDataProvided,
     #[error(
         "column name length does not match column dtypes (name length {n_len}, dtype length {d_len})"
     )]

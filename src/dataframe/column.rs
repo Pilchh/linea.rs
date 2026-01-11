@@ -1,5 +1,8 @@
-use crate::dataframe::dtype::Dtype;
+use std::fmt;
 
+use crate::dataframe::{dtype::Dtype, scalar::Scalar};
+
+#[derive(Debug, Clone)]
 pub enum Column {
     Int64(Vec<i64>),
     Float64(Vec<f64>),
@@ -45,6 +48,27 @@ impl Column {
             Column::Bool(v) => Column::Bool(v[..n].to_vec()),
         }
     }
+
+    pub fn eq(&self, value: impl Into<Scalar>) -> Column {
+        let value: Scalar = value.into();
+
+        match (self, value) {
+            (Column::Int64(col), Scalar::Int64(v)) => {
+                Column::Bool(col.iter().map(|x| *x == v).collect())
+            }
+            (Column::Float64(col), Scalar::Float64(v)) => {
+                Column::Bool(col.iter().map(|x| *x == v).collect())
+            }
+            (Column::String(col), Scalar::String(v)) => {
+                Column::Bool(col.iter().map(|x| *x == v).collect())
+            }
+            (Column::Bool(col), Scalar::Bool(v)) => {
+                Column::Bool(col.iter().map(|x| *x == v).collect())
+            }
+
+            _ => panic!("dtype mismatch"),
+        }
+    }
 }
 
 pub trait IntoColumn {
@@ -80,5 +104,39 @@ impl IntoColumn for &str {
 impl IntoColumn for bool {
     fn into_column(data: Vec<Self>) -> Column {
         Column::Bool(data)
+    }
+}
+
+impl fmt::Display for Column {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.len() == 0 {
+            writeln!(f, "Empty Column")?;
+            return Ok(());
+        }
+
+        match self {
+            Column::Int64(v) => {
+                for x in v {
+                    writeln!(f, "{x}")?;
+                }
+            }
+            Column::Float64(v) => {
+                for x in v {
+                    writeln!(f, "{x}, ")?;
+                }
+            }
+            Column::String(v) => {
+                for x in v {
+                    writeln!(f, "{x}, ")?;
+                }
+            }
+            Column::Bool(v) => {
+                for x in v {
+                    writeln!(f, "{x}, ")?;
+                }
+            }
+        }
+
+        Ok(())
     }
 }

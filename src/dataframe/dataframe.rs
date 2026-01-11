@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, ops::Index};
 
 use crate::dataframe::{Column, Series, column::IntoColumn, errors::DataFrameError};
 
@@ -22,6 +22,24 @@ impl DataFrame {
         }
     }
 
+    pub fn from_series(series: Vec<Series>) -> Result<DataFrame, DataFrameError> {
+        if series.len() == 0 {
+            return Err(DataFrameError::InvalidDataProvided);
+        }
+
+        let are_same_length = series
+            .first()
+            .map(|first| series.iter().all(|s| s.len() == first.len()))
+            .unwrap_or(true);
+
+        if !are_same_length {
+            return Err(DataFrameError::SeriesLengthMismatch);
+        }
+
+        let nrows = series[0].len();
+        Ok(DataFrame { series, nrows })
+    }
+
     pub fn column<T: IntoColumn>(&mut self, name: &str, values: Vec<T>) -> &mut Self {
         if self.nrows != 0 {
             if values.len() != self.nrows {
@@ -42,7 +60,7 @@ impl DataFrame {
     pub fn insert(&mut self, index: usize, value: Series) -> Result<(), DataFrameError> {
         if self.nrows != 0 {
             if value.len() != self.nrows {
-                return Err(DataFrameError::SeriesLengthMismatch {
+                return Err(DataFrameError::SeriesDataFrameLengthMismatch {
                     s_len: value.len(),
                     df_len: self.nrows,
                 });
@@ -63,6 +81,18 @@ impl DataFrame {
         }
 
         self
+    }
+
+    pub fn select<'a, I>(&self, names: I) -> DataFrame
+    where
+        I: IntoIterator<Item = &'a str>,
+    {
+        let series: Vec<Series> = names
+            .into_iter()
+            .map(|name| self.series(name).clone())
+            .collect();
+
+        DataFrame::from_series(series).unwrap()
     }
 
     pub fn head(&self, n: usize) -> DataFrame {
@@ -104,6 +134,17 @@ impl DataFrame {
         }
     }
 
+    fn series(&self, name: &str) -> &Series {
+        self.series
+            .iter()
+            .find(|s| s.name == name)
+            .expect("Series does not exist in dataframe")
+    }
+
+    fn get_series(&self, name: &str) -> Series {
+        self.series(name).clone()
+    }
+
     fn remove_series(&mut self, index: usize) {
         self.series.remove(index);
 
@@ -122,6 +163,33 @@ impl DataFrame {
         self.series.insert(index, series);
     }
 }
+
+impl Index<&str> for DataFrame {
+    type Output = Series;
+
+    fn index(&self, name: &str) -> &Self::Output {
+        self.series
+            .iter()
+            .find(|s| s.name == name)
+            .expect("series not found")
+    }
+}
+
+// impl PartialEq for Matrix {
+//     fn eq(&self, other: &Self) -> bool {
+//         if self.rows != other.rows || self.cols != other.cols {
+//             return false;
+//         }
+//
+//         // f64 float tolerance
+//         const EPS: f64 = 1e-9;
+//
+//         self.data
+//             .iter()
+//             .zip(&other.data)
+//             .all(|(a, b)| (a - b).abs() < EPS)
+//     }
+// }
 
 const PADDING: usize = 15;
 

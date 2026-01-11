@@ -1,5 +1,8 @@
-use crate::dataframe::{Column, Dtype, column::IntoColumn};
+use std::fmt::{self, Display};
 
+use crate::dataframe::{Column, Dtype, column::IntoColumn, scalar::Scalar};
+
+#[derive(Debug, Clone)]
 pub struct Series {
     pub name: String,
     pub column: Column,
@@ -34,5 +37,29 @@ impl Series {
 
     pub fn len(&self) -> usize {
         self.column.len()
+    }
+
+    pub fn eq(&self, value: impl Into<Scalar>) -> Series {
+        Series {
+            name: self.name.clone(),
+            column: self.column.eq(value),
+        }
+    }
+}
+
+impl fmt::Display for Series {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "Series: {{")?;
+        writeln!(f, "  name: {}", self.name)?;
+        writeln!(f, "  column: {{")?;
+
+        for line in self.column.as_strings() {
+            writeln!(f, "    {}", line)?;
+        }
+
+        writeln!(f, "  }}")?;
+        writeln!(f, "}}")?;
+
+        Ok(())
     }
 }
