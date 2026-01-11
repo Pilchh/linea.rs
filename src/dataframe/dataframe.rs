@@ -130,6 +130,8 @@ impl fmt::Display for DataFrame {
             return Ok(());
         }
 
+        let shape = self.shape();
+        writeln!(f, "Width: {}, Height: {}", shape.0, shape.1)?;
         writeln!(f, "{}", "-".repeat(&self.series.len() * PADDING))?;
 
         for s in &self.series {
@@ -161,11 +163,13 @@ impl fmt::Display for DataFrame {
 
         writeln!(f, "{}", "-".repeat(&self.series.len() * PADDING))?;
 
-        writeln!(f, "\ndtypes:")?;
+        writeln!(f, "dtypes:")?;
 
         for s in &self.series {
             writeln!(f, "{}: {}", s.name, s.column.dtype())?;
         }
+
+        writeln!(f, "{}", "-".repeat(&self.series.len() * PADDING))?;
 
         Ok(())
     }

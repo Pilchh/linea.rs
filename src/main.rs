@@ -10,9 +10,6 @@ fn main() {
     )
     .unwrap();
 
-    let shape = df.shape();
-    println!("Width: {}, Height: {}", shape.0, shape.1);
-
     let head = df.head(10);
     println!("{}", head);
 
