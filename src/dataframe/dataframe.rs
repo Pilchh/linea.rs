@@ -1,6 +1,6 @@
 use std::{fmt, ops::Index};
 
-use crate::dataframe::{Column, Series, column::IntoColumn, errors::DataFrameError};
+use crate::dataframe::{Column, Dtype, Series, column::IntoColumn, errors::DataFrameError};
 
 pub struct DataFrame {
     series: Vec<Series>,
@@ -95,7 +95,19 @@ impl DataFrame {
         DataFrame::from_series(series).unwrap()
     }
 
-    // pub fn filter(&self, mask: &Series) -> DataFrame {}
+    pub fn filter(&self, mask: &Series) -> DataFrame {
+        if mask.dtype != Dtype::Bool {
+            panic!("filter can only use boolean series");
+        }
+
+        if mask.column.len() != self.series[0].len() {
+            panic!("mask length does not match dataframe length");
+        }
+
+        let filtered_series: Vec<Series> = self.series.iter().map(|s| s.filter(mask)).collect();
+
+        DataFrame::from_series(filtered_series).unwrap()
+    }
 
     pub fn head(&self, n: usize) -> DataFrame {
         let mut df = DataFrame::new();

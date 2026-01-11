@@ -59,7 +59,46 @@ impl Series {
         Series {
             name: self.name.clone(),
             column: self.column.clone().eq(value),
-            dtype: self.column.dtype(),
+            dtype: Dtype::Bool,
+        }
+    }
+
+    pub fn filter(&self, mask: &Series) -> Series {
+        if let Column::Bool(mask) = &mask.column {
+            let filtered_column = match &self.column {
+                Column::Int64(v) => Column::Int64(
+                    v.iter()
+                        .zip(mask)
+                        .filter_map(|(x, &m)| if m { Some(*x) } else { None })
+                        .collect(),
+                ),
+                Column::Float64(v) => Column::Float64(
+                    v.iter()
+                        .zip(mask)
+                        .filter_map(|(x, &m)| if m { Some(*x) } else { None })
+                        .collect(),
+                ),
+                Column::String(v) => Column::String(
+                    v.iter()
+                        .zip(mask)
+                        .filter_map(|(x, &m)| if m { Some(x.clone()) } else { None })
+                        .collect(),
+                ),
+                Column::Bool(v) => Column::Bool(
+                    v.iter()
+                        .zip(mask)
+                        .filter_map(|(x, &m)| if m { Some(*x) } else { None })
+                        .collect(),
+                ),
+            };
+
+            Series {
+                name: self.name.clone(),
+                column: filtered_column,
+                dtype: self.dtype.clone(),
+            }
+        } else {
+            panic!("mask is not a boolean column");
         }
     }
 }
