@@ -58,11 +58,8 @@ impl DataFrame {
     }
 
     pub fn remove(&mut self, name: &str) -> &mut Self {
-        for i in 0..self.series.len() - 1 {
-            if &self.series[i].name == name {
-                self.remove_series(i);
-                break;
-            }
+        if let Some(position) = self.series.iter().position(|s| s.name == name) {
+            self.remove_series(position);
         }
 
         self
@@ -83,22 +80,27 @@ impl DataFrame {
     }
 
     pub fn shape(&self) -> (usize, usize) {
-        (self.series.len(), self.nrows)
+        (self.nrows, self.series.len())
     }
 
     fn assert_compatible_series(&mut self, series: &Series) {
-        if self.nrows != 0 {
-            if self.nrows != series.len() {
-                panic!(
-                    "series size mismatch: df has {} rows, series has {}",
-                    self.nrows,
-                    series.len()
-                );
+        let series_len = series.len();
+
+        // If this is the first series being added
+        if self.series.is_empty() {
+            if series_len == 0 {
+                panic!("Cannot add empty series as the first column");
             }
+            self.nrows = series_len;
+            return;
         }
 
-        if self.nrows == 0 {
-            self.nrows = series.len();
+        // For all subsequent series, lengths must match
+        if series_len != self.nrows {
+            panic!(
+                "Series length mismatch: DataFrame has {} rows, series has {}",
+                self.nrows, series_len
+            );
         }
     }
 
@@ -131,7 +133,7 @@ impl fmt::Display for DataFrame {
         }
 
         let shape = self.shape();
-        writeln!(f, "Width: {}, Height: {}", shape.0, shape.1)?;
+        writeln!(f, "Height: {}, Width: {}", shape.0, shape.1)?;
         writeln!(f, "{}", "-".repeat(&self.series.len() * PADDING))?;
 
         for s in &self.series {
