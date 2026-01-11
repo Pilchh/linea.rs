@@ -80,6 +80,13 @@ impl Column {
             }
         }
     }
+
+    pub fn get_f64(&self, index: usize) -> f64 {
+        match self {
+            Column::Float64(v) => v[index],
+            _ => panic!("get_f64 can only be called on float series"),
+        }
+    }
 }
 
 pub trait IntoColumn {

@@ -1,4 +1,8 @@
-use crate::{math::matrix::Matrix, math::vector::Vector, ml::dataset::Dataset};
+use crate::{
+    dataframe::{DataFrame, Series},
+    math::{matrix::Matrix, vector::Vector},
+    ml::dataset::Dataset,
+};
 
 pub struct LinearRegression {
     pub coefficients: Option<Vector>,
@@ -9,18 +13,22 @@ impl LinearRegression {
         LinearRegression { coefficients: None }
     }
 
-    pub fn fit(&mut self, dataset: &Dataset, target_col: usize) {
-        // Get all data
-        let mut x = dataset.samples();
+    pub fn fit(&mut self, x: &DataFrame, y: &DataFrame) {
+        let (rows, _) = x.shape();
+
+        let mut x_df = x.clone();
+
+        // Insert bias column
+        let bias = Series::from_vec("bias".into(), vec![1.0; rows]);
+        x_df.insert(0, bias);
+
+        let mut x_mat = x_df.as_matrix();
 
         // Get the label columns
-        let y = Vector::from_vec(x.col(target_col).unwrap());
-
-        // Remove the label column
-        x = x.drop_col(target_col);
+        let y = y.clone().as_vector();
 
         // Calculate coefficients
-        let (q, r) = x.qr_decompose().unwrap();
+        let (q, r) = x_mat.qr_decompose().unwrap();
         let qt_y = &q.transpose() * &y;
 
         self.coefficients = Some(r.solve_upper(&qt_y).unwrap());

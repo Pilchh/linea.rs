@@ -167,16 +167,21 @@ impl DataFrame {
         }
     }
 
-    pub fn as_vector(&self) -> Vector {
-        let (rows, _) = self.shape();
+    pub fn as_vector(&self) -> Matrix {
+        let (rows) = self.shape();
         let mut vector_data: Vec<f64> = Vec::with_capacity(rows);
 
         for row in 0..rows {
-            let series = &self.series[0];
-            vector_data.push(series.column.get_f64(row))
+            for col in 0..cols {
+                let series = &self.series[col];
+                matrix_data.push(series.column.get_f64(row));
+            }
         }
 
-        Vector::from_vec(vector_data)
+        Vector {
+            size: rows,
+            data: 
+        }
     }
 
     fn assert_compatible_series(&mut self, series: &Series) {

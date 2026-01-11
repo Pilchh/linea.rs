@@ -44,9 +44,6 @@ impl Series {
     }
 
     pub fn from_column(name: String, column: Column) -> Series {
-        if name == "sqft_living" {
-            println!("sqft {}", column.dtype());
-        }
         Series {
             name,
             column: column.clone(),
