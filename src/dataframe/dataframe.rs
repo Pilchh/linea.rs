@@ -127,6 +127,24 @@ impl DataFrame {
         (self.nrows, self.series.len())
     }
 
+    pub fn cast_all(&mut self, from: Dtype, to: Dtype) -> &mut Self {
+        let cast_series = self
+            .series
+            .iter()
+            .map(|s| {
+                let mut s = s.clone();
+                if s.dtype == from {
+                    s = s.cast(&to);
+                }
+
+                s
+            })
+            .collect::<Vec<Series>>();
+
+        self.series = cast_series;
+        self
+    }
+
     fn assert_compatible_series(&mut self, series: &Series) {
         let series_len = series.len();
 

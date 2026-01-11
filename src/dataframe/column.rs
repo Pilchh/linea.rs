@@ -69,6 +69,17 @@ impl Column {
             _ => panic!("dtype mismatch"),
         }
     }
+
+    pub fn cast(&self, new_type: &Dtype) -> Self {
+        match (self, new_type) {
+            (Column::Int64(col), Dtype::Float64) => {
+                Column::Float64(col.iter().map(|v| *v as f64).collect())
+            }
+            _ => {
+                todo!()
+            }
+        }
+    }
 }
 
 pub trait IntoColumn {

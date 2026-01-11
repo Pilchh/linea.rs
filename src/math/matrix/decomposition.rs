@@ -132,7 +132,6 @@ impl Matrix {
         Ok((l, u))
     }
 
-    // TODO: Figure out how this is supposed to work
     pub fn qr_decompose(&self) -> Result<(Matrix, Matrix), MatrixOperationError> {
         let m = self.rows;
         let n = self.cols;
