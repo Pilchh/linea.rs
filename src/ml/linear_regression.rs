@@ -1,7 +1,6 @@
 use crate::{
     dataframe::{DataFrame, Series},
     math::{matrix::Matrix, vector::Vector},
-    ml::dataset::Dataset,
 };
 
 pub struct LinearRegression {
